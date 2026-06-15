@@ -131,6 +131,8 @@ body{font-family:Georgia,serif;background:var(--bg);color:var(--text);font-size:
   <div class="tab" data-tab="adaptacja" onclick="showTab('adaptacja')">&#x1F527; Adaptacja</div>
   <div class="tab" data-tab="wyposazenie" onclick="showTab('wyposazenie')">&#x1F5C4; Wyposa&#x17C;enie</div>
   <div class="tab" data-tab="narzedzia" onclick="showTab('narzedzia')">&#x2699;&#xFE0F; Narz&#x119;dzia</div>
+  <div class="tab" data-tab="monitoring" onclick="showTab('monitoring')">&#x1F4F6; Monitoring HA</div>
+  <div class="tab" data-tab="odciag" onclick="showTab('odciag')">&#x1F32A; Odciąg pyłu</div>
   <div class="tab" data-tab="raport" onclick="showTab('raport')">&#x1F4CA; Raport</div>
 </div></nav>
 
@@ -301,6 +303,122 @@ body{font-family:Georgia,serif;background:var(--bg);color:var(--text);font-size:
 <div class="tbar" style="margin-top:13px;"><div><span class="tbl">Koszt zakupu narz&#x119;dzi</span><div style="font-size:11px;color:var(--oak-light);font-family:monospace;margin-top:3px;">Tylko narz&#x119;dzia do kupienia z wybranym poziomem</div></div><span class="tbv" id="tools-total">&#x2014;</span></div>
 </div>
 
+<!-- TAB MONITORING HA -->
+<div id="tab-monitoring" class="section">
+<div class="stitle">Monitoring warsztatu &mdash; Home Assistant</div>
+<div class="sdesc">Serwer HA, sie&#x107; i czujniki Zigbee. Koszty jednorazowe, bez abonamentu.</div>
+<div class="alert">&#x1F4A1; Osobny budynek wymaga po&#x142;&#x105;czenia sieciowego (kabel LAN lub mesh Wi-Fi). Zigbee nie przebije mur&#xF3;w mi&#x119;dzy budynkami.</div>
+<div class="r2">
+<div>
+
+<div class="card"><div class="ctitle">&#x1F4BB; Serwer Home Assistant (Raspberry Pi)</div>
+<div class="cr"><div class="crn">Raspberry Pi 4 Model B &mdash; 4 GB RAM<small>Polecany: 4 GB dla p&#x142;ynnej pracy HA + add-ony</small></div><input class="ci-num" type="number" value="280" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Karta microSD 32 GB (boot)<small>Samsung Endurance Pro lub SanDisk Endurance</small></div><input class="ci-num" type="number" value="40" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Dysk SSD 120 GB USB 3.0 (dane HA)<small>Samsung T7 lub Kingston XS2000 &mdash; HA OS bootuje z SSD</small></div><input class="ci-num" type="number" value="120" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Obudowa aluminiowa z wentylatorem<small>Argon ONE M.2 lub Geekworm X735 &mdash; z miej. na SSD</small></div><input class="ci-num" type="number" value="130" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Zasilacz USB-C 5V/3A (oficjalny RPi)<small>Oryginalny Raspberry Pi PSU &mdash; nie oszcz&#x119;dzaj na zasilaczu</small></div><input class="ci-num" type="number" value="60" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+
+<div class="card"><div class="ctitle">&#x1F4E1; Koordynator Zigbee</div>
+<div class="cr"><div class="crn">Sonoff Zigbee 3.0 USB Dongle Plus-P<small>Najlepszy stosunek ceny do jako&#x15B;ci, chip TI CC2652P</small></div><input class="ci-num" type="number" value="80" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Przed&#x142;u&#x17C;acz USB 50 cm (do dongla)<small>Dongle blisko RPi generuje zak&#x142;&#xF3;cenia &mdash; przedl. eliminuje je</small></div><input class="ci-num" type="number" value="15" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+
+<div class="card"><div class="ctitle">&#x1F5C4; Szafka i infrastruktura</div>
+<div class="cr"><div class="crn">Szafka wisz&#x105;ca na spr. sieciowy (6U)<small>np. Linkbasic lub Toten 6U 450mm &mdash; zamykana, wentylowana</small></div><input class="ci-num" type="number" value="350" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Panel krosowniczy RJ45 (12 port&#xF3;w)<small>Opcjonalnie &mdash; porz&#x105;dkuje okablowanie LAN</small></div><input class="ci-num" type="number" value="80" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Przed&#x142;u&#x17C;acz / listwa rack 1,5 m (z bezp.)<small>Do szafki &mdash; min. 6 gniazd, filtr przeciwprzep.</small></div><input class="ci-num" type="number" value="120" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">UPS 600 VA (podtrzymanie pr&#x105;du)<small>APC Back-UPS 600 &mdash; chroni RPi i router przed spad. nap.</small></div><input class="ci-num" type="number" value="280" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+
+</div>
+<div>
+
+<div class="card"><div class="ctitle">&#x1F310; Sie&#x107; &mdash; po&#x142;&#x105;czenie dom&ndash;warsztat</div>
+<div class="cr"><div class="crn">Switch 8-portowy Gigabit (szafka dom)<small>TP-Link TL-SG108 lub Netgear GS308 &mdash; niemanagowany</small></div><input class="ci-num" type="number" value="100" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Switch 5-portowy Gigabit (warsztat)<small>TP-Link TL-SG105 &mdash; ma&#x142;y, do szafki w warsztacie</small></div><input class="ci-num" type="number" value="60" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Kabel LAN Cat6 w ziemi (20&ndash;30 m)<small>Z rur&#x105; HDPE &mdash; do&#x142;&#x105;cz 15% na z&#x142;&#x105;czki i muf&#x119;</small></div><input class="ci-num" type="number" value="150" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Rura ochronna HDPE 40 mm (25 m)<small>G&#x142;&#x119;b. uk&#x142;adania min. 60 cm, najlepiej 80 cm</small></div><input class="ci-num" type="number" value="80" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">AP Wi-Fi warsztat (mesh lub standalone)<small>TP-Link EAP225 lub Ubiquiti UniFi AP Lite</small></div><input class="ci-num" type="number" value="220" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+
+<div class="card"><div class="ctitle">&#x1F321; Czujniki Zigbee &mdash; warsztat</div>
+<div class="cr"><div class="crn">Aqara TH-S2 &mdash; temp. i wilgotno&#x15B;&#x107; (x2)<small>Strefa robocza + sk&#x142;ad drewna &mdash; Zigbee 3.0</small></div><input class="ci-num" type="number" value="160" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">IKEA VINDRIKTNING + modu&#x142; ESP32 (py&#x142;)<small>PM2.5 / PM10 &mdash; modu&#x142; Sinilink lub DIY ESPHome</small></div><input class="ci-num" type="number" value="110" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Heiman HS3SA &mdash; czujnik dymu + CO<small>Monta&#x17C; przy suficie, 30&ndash;50 cm od &#x15B;ciany</small></div><input class="ci-num" type="number" value="120" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Czujnik gazu LPG Zigbee<small>Monta&#x17C; przy pod&#x142;odze (propan ci&#x119;&#x17C;szy od powietrza)</small></div><input class="ci-num" type="number" value="80" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Shelly Pro EM &mdash; licznik energii (Wi-Fi)<small>Na szynie DIN w rozdzielnicy &mdash; 2 obwody</small></div><input class="ci-num" type="number" value="250" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Aqara Motion Sensor P1 &mdash; PIR (ruch)<small>Przy suficie &mdash; obejmuje ca&#x142;&#x105; stref&#x119; wej&#x15B;cia</small></div><input class="ci-num" type="number" value="80" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Aqara Door &amp; Window Sensor D1 (x2)<small>Drzwi wej&#x15B;ciowe + brama &mdash; alarm otwarcia</small></div><input class="ci-num" type="number" value="120" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+
+<div class="card"><div class="ctitle">&#x1F527; Okablowanie i monta&#x17C;</div>
+<div class="cr"><div class="crn">Kable LAN wewn&#x119;trzne warsztat (10 m)<small>Patch-cordy + okablowanie do AP i switch</small></div><input class="ci-num" type="number" value="40" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Inne materia&#x142;y i monta&#x17C;<small>Uchwyty, listwa, uszczelki, praca w&#x142;asna</small></div><input class="ci-num" type="number" value="100" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+
+</div>
+</div>
+<div class="tbar"><span class="tbl">Szacowany koszt monitoringu HA</span><span class="tbv" id="monitoring-total">&#x2014;</span></div>
+</div>
+
+
+<!-- TAB ODCIAG -->
+<div id="tab-odciag" class="section">
+<div class="stitle">Odciąg pyłu i trocin</div>
+<div class="sdesc">Warsztat 40 m², 2 punkty odciągu przy ścianie, filtracja i zawracanie powietrza. Ceny zweryfikowane czerwiec 2025.</div>
+<div class="alert">&#x26A0; Nie uruchamiaj obu odciągów jednocześnie — zasuwy blast gate regulują który punkt jest aktywny. Festool to osobny, niezależny system do narzędzi ręcznych.</div>
+<div class="r2">
+<div>
+
+<div class="card"><div class="ctitle">&#x1F300; Centralna jednostka filtrująca</div>
+<div class="cr"><div class="crn">Wariant ekonomiczny: Holzmann ABS 1080<small>1080 m³/h, 750 W, filtr workowy, Zeta 100 mm</small></div><input class="ci-num" type="number" value="1200" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Wariant optymalny: Cormak 2200 m³/h<small>2200 m³/h, 2,2 kW, 2 worki po 100 L, Zeta 100 mm</small></div><input class="ci-num" type="number" value="0" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Wariant premium: JET DC-1100A<small>1700 m³/h, filtr kasetowy 5 μm, cicha praca</small></div><input class="ci-num" type="number" value="0" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+
+<div class="card"><div class="ctitle">&#x1F300; Separator cyklonowy (opcja — zalecana)</div>
+<div class="cr"><div class="crn">Separator cyklonowy Zeta 100 mm<small>Zbiera 90% trocin przed filtrem — przedłuża żywotność worka</small></div><input class="ci-num" type="number" value="250" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Pojemnik na trociny do separatora (20 L)<small>Wiadro lub pojemnik metalowy z uszczelką</small></div><input class="ci-num" type="number" value="40" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+
+<div class="card"><div class="ctitle">&#x1F6E0; Rurociąg stały przy ścianie</div>
+<div class="cr"><div class="crn">Rura PVC Zeta 100 mm (odcinki 2 m × 4)<small>Trasa przy ścianie, ok. 6–8 m łącznie</small></div><input class="ci-num" type="number" value="100" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Kolano 90° Zeta 100 mm (×4 szt.)<small>Narożniki trasy przy ścianie</small></div><input class="ci-num" type="number" value="48" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Trójnik Zeta 100 mm (×1 szt.)<small>Rozdział na dwa punkty odciągu</small></div><input class="ci-num" type="number" value="25" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Zasuwa blast gate Zeta 100 mm metalowa (×2)<small>Regulacja który punkt odciągu jest aktywny</small></div><input class="ci-num" type="number" value="90" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Opaski zaciskowe i uchwyty ścienne<small>Montaż rury przy ścianie co 80 cm</small></div><input class="ci-num" type="number" value="40" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Taśma aluminiowa uszczelniająca<small>Szczelność połączeń — nie używaj taśmy duct tape</small></div><input class="ci-num" type="number" value="20" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+
+</div>
+<div>
+
+<div class="card"><div class="ctitle">&#x1F300; Wąże elastyczne do maszyn</div>
+<div class="cr"><div class="crn">Wąż elastyczny Zeta 100 mm / 3 m (×2)<small>Do każdego punktu odciągu osobny wąż</small></div><input class="ci-num" type="number" value="160" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Złączka redukcyjna Zeta 100→63 mm (×2)<small>Maszyny z wypadem Zeta 63 — pilarka, strugarka</small></div><input class="ci-num" type="number" value="30" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Opaska zaciskowa do wąża (komplet)<small>Pewne mocowanie — wibracje maszyny rozłączą wciskane wąże</small></div><input class="ci-num" type="number" value="20" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+
+<div class="card"><div class="ctitle">&#x1F9F9; Festool — narzędzia ręczne (osobny system)</div>
+<div class="cr"><div class="crn">Festool CTL SYS (zweryfikowana cena)<small>3700 l/min, 4,5 L, format Systainer — od 1 468 PLN</small></div><input class="ci-num" type="number" value="1890" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Alternatywa: Festool CT 15 Set<small>15 L, pełny zestaw z wążem i dyszami — 1 860 PLN</small></div><input class="ci-num" type="number" value="0" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Wąż antystatyczny Festool 3,5 m Zeta 27 mm<small>Do szlifierki / frezarki ręcznej</small></div><input class="ci-num" type="number" value="180" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Worki filtracyjne Festool FIS-CT SYS (5 szt.)<small>Wymiana co ok. 4–8 godzin intensywnej pracy</small></div><input class="ci-num" type="number" value="60" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+
+<div class="card"><div class="ctitle">&#x1F527; Montaż i materiały dodatkowe</div>
+<div class="cr"><div class="crn">Uchwyt ścienny na jednostkę / podstawa mobilna<small>Jednostka na kółkach lub przykręcona do ściany</small></div><input class="ci-num" type="number" value="80" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Worek zapasowy / filtr do jednostki centralnej<small>Pierwszy zapasowy — wymiana co 20–40 h pracy</small></div><input class="ci-num" type="number" value="60" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Materiały montażowe i inne<small>Wiertla, kołki, uszczelki, praca własna</small></div><input class="ci-num" type="number" value="80" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+
+</div>
+</div>
+<div class="tbar"><span class="tbl">Szacowany koszt systemu odciągu</span><span class="tbv" id="odciag-total">&#x2014;</span></div>
+</div>
+
+
 <!-- TAB RAPORT -->
 <div id="tab-raport" class="section">
 <div class="stitle">Raport finansowy</div>
@@ -386,6 +504,7 @@ function showTab(name){
   document.getElementById('tab-'+name).classList.add('active');
   document.querySelector('.tab[data-tab="'+name+'"]').classList.add('active');
   if(name==='raport')renderReport();
+  if(name==='monitoring'){recalc();}
   saveState();
 }
 
@@ -429,11 +548,13 @@ function calcTools(){
   },0);
 }
 function recalc(){
-  const ad=sumCat('adaptacja'),eq=sumCat('wyposazenie'),tl=calcTools(),tot=ad+eq+tl;
+  const ad=sumCat('adaptacja'),eq=sumCat('wyposazenie'),tl=calcTools(),mn=sumCat('monitoring'),od=sumCat('odciag'),tot=ad+eq+tl+mn+od;
   const g=id=>document.getElementById(id);
   if(g('adapt-total'))g('adapt-total').textContent=fmt(ad);
   if(g('equip-total'))g('equip-total').textContent=fmt(eq);
   if(g('tools-total'))g('tools-total').textContent=fmt(tl);
+  if(g('monitoring-total'))g('monitoring-total').textContent=fmt(mn);
+  if(g('odciag-total'))g('odciag-total').textContent=fmt(od);
   const pct=Math.min(100,Math.round(tot/BUDGET*100));
   const fill=g('bFill');if(fill){fill.style.width=pct+'%';fill.classList.toggle('over',tot>BUDGET);}
   if(g('spentLbl'))g('spentLbl').textContent=fmt(tot);
@@ -507,19 +628,43 @@ function renderReport(){
   g('r-tables').textContent=fmt(tb);g('r-storage').textContent=fmt(st);g('r-racks').textContent=fmt(rk);g('r-bhp').textContent=fmt(bh);
   g('r-equip-sum').textContent=fmt(eqS);
   g('r-power').textContent=fmt(pw);g('r-hand').textContent=fmt(hw);g('r-tools-sum').textContent=fmt(tlS);
-  g('r-total').textContent=Math.round(grand).toLocaleString('pl-PL');
-  g('r-remain').textContent=Math.round(BUDGET-grand).toLocaleString('pl-PL');
-  g('r-grand').textContent=fmt(grand);
+  const mn=sumCat('monitoring');
+  const od=sumCat('odciag');
+  const odUnit=cardSum('tab-odciag',0)+cardSum('tab-odciag',1);
+  const odPipes=cardSum('tab-odciag',2)+cardSum('tab-odciag',3);
+  const odFestool=cardSum('tab-odciag',4);
+  const odInstall=cardSum('tab-odciag',5);
+  const rpi=cardSum('tab-monitoring',0)+cardSum('tab-monitoring',1);
+  const rack=cardSum('tab-monitoring',2);
+  const net=cardSum('tab-monitoring',3);
+  const sensors=cardSum('tab-monitoring',4)+cardSum('tab-monitoring',5)+cardSum('tab-monitoring',6);
+  const monSum=mn;
+  const grand2=adS+eqS+tlS+monSum+od;
+  g('r-rpi').textContent=fmt(rpi);
+  g('r-rack').textContent=fmt(rack);
+  g('r-net').textContent=fmt(net);
+  g('r-sensors').textContent=fmt(sensors);
+  g('r-mon-sum').textContent=fmt(monSum);
+  g('r-od-unit').textContent=fmt(odUnit);
+  g('r-od-pipes').textContent=fmt(odPipes);
+  g('r-od-festool').textContent=fmt(odFestool);
+  g('r-od-install').textContent=fmt(odInstall);
+  g('r-od-sum').textContent=fmt(od);
+  g('r-total').textContent=Math.round(grand2).toLocaleString('pl-PL');
+  g('r-remain').textContent=Math.round(BUDGET-grand2).toLocaleString('pl-PL');
+  g('r-grand').textContent=fmt(grand2);
   const box=g('rep-total-box'),sts=g('r-status');
-  if(grand>BUDGET){box.className='reptotal warn';sts.textContent='\u26A0 Przekroczono bud\u017Cet o '+fmt(grand-BUDGET);}
-  else{box.className='reptotal ok';sts.textContent='\u2713 W ramach bud\u017Cetu \u2014 bufor '+Math.round((BUDGET-grand)/BUDGET*100)+'%';}
+  if(grand2>BUDGET){box.className='reptotal warn';sts.textContent='\u26A0 Przekroczono bud\u017Cet o '+fmt(grand2-BUDGET);}
+  else{box.className='reptotal ok';sts.textContent='\u2713 W ramach bud\u017Cetu \u2014 bufor '+Math.round((BUDGET-grand2)/BUDGET*100)+'%';}
 }
 
 // SAVE/LOAD
 function saveState(){
-  try{localStorage.setItem('warsztat-v3',JSON.stringify({
+  try{localStorage.setItem('warsztat-v5',JSON.stringify({
     owned:state.owned,tier:state.tier,budget:BUDGET,
     adaptacja:Array.from(document.querySelectorAll('input[data-cat="adaptacja"]')).map(e=>e.value),
+    monitoring:Array.from(document.querySelectorAll('input[data-cat="monitoring"]')).map(e=>e.value),
+    odciag:Array.from(document.querySelectorAll('input[data-cat="odciag"]')).map(e=>e.value),
     wyposazenie:Array.from(document.querySelectorAll('input[data-cat="wyposazenie"]')).map(e=>e.value),
     notesOb:document.getElementById('notes-obiekt')?.value,
     notesRp:document.getElementById('notes-raport')?.value,
@@ -528,12 +673,14 @@ function saveState(){
 }
 function loadState(){
   try{
-    const raw=localStorage.getItem('warsztat-v3');if(!raw)return;
+    const raw=localStorage.getItem('warsztat-v5');if(!raw)return;
     const d=JSON.parse(raw);
     Object.assign(state.owned,d.owned||{});Object.assign(state.tier,d.tier||{});
     if(d.budget){BUDGET=d.budget;document.getElementById('budgetInput').value=d.budget;}
     if(d.adaptacja){const els=document.querySelectorAll('input[data-cat="adaptacja"]');d.adaptacja.forEach((v,i)=>{if(els[i])els[i].value=v;});}
     if(d.wyposazenie){const els=document.querySelectorAll('input[data-cat="wyposazenie"]');d.wyposazenie.forEach((v,i)=>{if(els[i])els[i].value=v;});}
+    if(d.monitoring){const els=document.querySelectorAll('input[data-cat="monitoring"]');d.monitoring.forEach((v,i)=>{if(els[i])els[i].value=v;});}
+    if(d.odciag){const els=document.querySelectorAll('input[data-cat="odciag"]');d.odciag.forEach((v,i)=>{if(els[i])els[i].value=v;});}
     if(d.notesOb)document.getElementById('notes-obiekt').value=d.notesOb;
     if(d.notesRp)document.getElementById('notes-raport').value=d.notesRp;
     if(d.checks){const cbs=document.querySelectorAll('.ci input[type=checkbox]');d.checks.forEach((v,i)=>{if(cbs[i])cbs[i].checked=v;});}
@@ -549,6 +696,10 @@ function exportData(){
   document.querySelectorAll('#tab-wyposazenie .cr').forEach(r=>{const n=r.querySelector('.crn')?.firstChild?.textContent.trim(),v=r.querySelector('input')?.value;if(n&&v)lines.push(n+': '+Number(v).toLocaleString('pl-PL')+' PLN');});
   lines.push('','--- NARZEDZIA ---');
   TOOLS.forEach(t=>{const o=state.owned[t.id]?'POSIADAM':(state.tier[t.id]?state.tier[t.id].toUpperCase():'POMINI\u0118TY');const p=!state.owned[t.id]&&state.tier[t.id]&&t[state.tier[t.id]]?.price>0?' \u2014 '+t[state.tier[t.id]].price.toLocaleString('pl-PL')+' PLN':'';lines.push(t.name+': '+o+p);});
+  lines.push('','--- MONITORING HA ---');
+  document.querySelectorAll('#tab-odciag .cr').forEach(r=>{const n=r.querySelector('.crn')?.firstChild?.textContent.trim(),v=r.querySelector('input')?.value;if(n&&v&&Number(v)>0)lines.push(n+': '+Number(v).toLocaleString('pl-PL')+' PLN');});
+  lines.push('','--- ODCIĄG PYŁU ---');
+  document.querySelectorAll('#tab-monitoring .cr').forEach(r=>{const n=r.querySelector('.crn')?.firstChild?.textContent.trim(),v=r.querySelector('input')?.value;if(n&&v)lines.push(n+': '+Number(v).toLocaleString('pl-PL')+' PLN');});
   lines.push('','--- NOTATKI ---',document.getElementById('notes-obiekt')?.value||'',document.getElementById('notes-raport')?.value||'');
   const blob=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='planer-warsztatu.txt';a.click();
