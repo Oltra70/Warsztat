@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planer Warsztatu Stolarskiego</title>
+<style>
+:root{--oak:#5C3D1E;--oak-light:#8B6344;--oak-pale:#F5EFE6;--oak-border:#D4B896;--amber:#BA7517;--amber-light:#FAC775;--amber-pale:#FAEEDA;--steel-light:#E8E8E8;--bg:#FAFAF8;--bg-card:#FFFFFF;--text:#1A1A1A;--text-muted:#5A5A5A;--success:#3B6D11;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Georgia,serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.6;}
+.header{background:var(--oak);color:#F5EFE6;border-bottom:3px solid var(--amber);}
+.header-inner{max-width:960px;margin:0 auto;padding:18px 24px 0;display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;}
+.header h1{font-size:23px;font-weight:normal;}
+.bstrip{background:rgba(0,0,0,0.28);}
+.bstrip-inner{max-width:960px;margin:0 auto;padding:8px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-family:monospace;font-size:13px;color:var(--amber-light);}
+.bstrip-inner input[type=number]{width:100px;padding:3px 7px;border:1px solid var(--amber);border-radius:4px;font-family:monospace;font-size:13px;background:rgba(255,255,255,0.12);color:#fff;text-align:right;}
+.bstrip-inner input[type=number]:focus{outline:none;background:rgba(255,255,255,0.22);}
+.b-num{color:#fff;font-weight:bold;}
+.b-track{flex:1;height:6px;background:rgba(255,255,255,0.15);border-radius:3px;min-width:60px;}
+.b-fill{height:100%;background:var(--amber);border-radius:3px;transition:width .4s;}
+.b-fill.over{background:#E24B4A;}
+.nav{background:var(--bg-card);border-bottom:1px solid var(--oak-border);position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+.nav-inner{max-width:960px;margin:0 auto;display:flex;overflow-x:auto;}
+.tab{padding:13px 18px;font-size:14px;cursor:pointer;color:var(--text-muted);border-bottom:3px solid transparent;white-space:nowrap;font-family:Georgia,serif;user-select:none;}
+.tab:hover{color:var(--oak);}
+.tab.active{color:var(--oak);border-bottom-color:var(--amber);font-weight:bold;}
+.main{max-width:960px;margin:0 auto;padding:24px 24px 60px;}
+.section{display:none;}
+.section.active{display:block;}
+.stitle{font-size:20px;font-weight:normal;color:var(--oak);margin-bottom:4px;}
+.sdesc{font-size:13px;color:var(--text-muted);margin-bottom:18px;font-family:monospace;}
+.card{background:var(--bg-card);border:1px solid var(--oak-border);border-radius:8px;padding:17px;margin-bottom:13px;}
+.ctitle{font-size:15px;font-weight:bold;color:var(--oak);margin-bottom:11px;display:flex;align-items:center;gap:8px;}
+.badge{font-size:11px;font-family:monospace;padding:2px 8px;border-radius:3px;background:var(--amber-pale);color:var(--amber);font-weight:normal;margin-left:auto;}
+
+/* CHECKBOXY — prawidlowe: input hidden, label klikalna */
+.ci{display:flex;align-items:flex-start;padding:0;border-bottom:1px solid var(--steel-light);}
+.ci:last-child{border-bottom:none;}
+.ci input[type=checkbox]{display:none;}
+.ci label{display:flex;align-items:flex-start;gap:11px;padding:9px 3px;width:100%;cursor:pointer;user-select:none;}
+.ci label:hover .cb-box{border-color:var(--oak);}
+.cb-box{width:20px;height:20px;border:2px solid var(--oak-border);border-radius:4px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;background:#fff;transition:background .15s,border-color .15s;}
+.ci input[type=checkbox]:checked + label .cb-box{background:var(--oak);border-color:var(--oak);}
+.ci input[type=checkbox]:checked + label .cb-box::after{content:'checkmark';font-size:0;width:10px;height:6px;border-left:2px solid #F5EFE6;border-bottom:2px solid #F5EFE6;transform:rotate(-45deg);margin-top:-3px;}
+.clt{flex:1;}
+.clt strong{color:var(--oak);font-size:14px;display:block;}
+.clt small{font-size:12px;color:var(--text-muted);font-family:monospace;}
+.cstars{display:flex;gap:2px;flex-shrink:0;padding-top:2px;}
+.star{color:var(--oak-border);font-size:14px;}
+.star.f{color:var(--amber);}
+.cprog{font-family:monospace;font-size:12px;color:var(--text-muted);margin-top:9px;padding-top:9px;border-top:1px solid var(--steel-light);}
+.pbar{height:5px;background:var(--steel-light);border-radius:3px;margin-top:5px;}
+.pfill{height:100%;background:var(--oak-light);border-radius:3px;transition:width .3s;}
+
+.cr{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--steel-light);font-size:14px;flex-wrap:wrap;}
+.cr:last-child{border-bottom:none;}
+.crn{flex:1;min-width:130px;}
+.crn small{display:block;font-size:11px;color:var(--text-muted);font-family:monospace;}
+.ci-num{width:110px;padding:5px 8px;border:1px solid var(--oak-border);border-radius:4px;font-family:monospace;font-size:13px;text-align:right;color:var(--text);background:var(--oak-pale);}
+.ci-num:focus{outline:none;border-color:var(--amber);background:#fff;}
+
+.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+@media(max-width:600px){.tgrid{grid-template-columns:1fr;}}
+.tcard{background:var(--bg-card);border:1px solid var(--oak-border);border-radius:8px;padding:13px;}
+.tcard.owned{border-color:#C0DD97;background:#F7FAF0;}
+.thead{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.tname{font-size:14px;font-weight:bold;color:var(--oak);flex:1;}
+.tstatus{font-size:11px;font-family:monospace;color:var(--text-muted);}
+.own-cb{width:17px;height:17px;accent-color:var(--success);cursor:pointer;flex-shrink:0;}
+.tr{display:flex;gap:8px;margin-top:5px;align-items:center;font-family:monospace;font-size:12px;}
+.trlbl{width:52px;color:var(--text-muted);flex-shrink:0;}
+.trval{font-size:13px;font-weight:bold;}
+.trval.f{color:var(--oak);}
+.trval.p{color:var(--amber);}
+.trmod{font-size:11px;color:var(--text-muted);flex:1;text-align:right;}
+.tsel{display:flex;gap:5px;margin-top:8px;}
+.tbtn{flex:1;padding:4px 5px;font-size:11px;font-family:monospace;border:1px solid var(--oak-border);border-radius:4px;background:var(--bg);cursor:pointer;text-align:center;color:var(--text-muted);}
+.tbtn.sf{background:var(--oak);color:#F5EFE6;border-color:var(--oak);}
+.tbtn.sp{background:var(--amber-pale);color:var(--amber);border-color:var(--amber);}
+.tbtn.ss{background:var(--steel-light);color:var(--text-muted);}
+.tprice{width:88px;padding:3px 6px;border:1px solid var(--oak-border);border-radius:4px;font-family:monospace;font-size:12px;font-weight:bold;text-align:right;background:var(--oak-pale);color:var(--text);cursor:text;}
+.tprice:focus{outline:none;border-color:var(--amber);background:#fff;}
+.tprice.f{color:var(--oak);}
+.tprice.p{color:var(--amber);}
+
+.repsec{margin-bottom:20px;}
+.rephdr{font-family:monospace;font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px;border-bottom:1px solid var(--oak-border);padding-bottom:5px;}
+.reprow{display:flex;justify-content:space-between;padding:5px 0;font-size:14px;border-bottom:1px dashed var(--steel-light);}
+.reprow:last-child{border-bottom:none;}
+.rlbl{color:var(--text-muted);}
+.rval{font-family:monospace;font-weight:bold;}
+.reptotal{background:var(--oak);color:#F5EFE6;border-radius:6px;padding:13px 16px;display:flex;justify-content:space-between;align-items:center;margin-top:13px;font-family:monospace;}
+.reptotal .rl{font-size:12px;color:var(--amber-light);}
+.reptotal .rv{font-size:20px;}
+.reptotal.warn .rv{color:#F09595;}
+.reptotal.ok .rv{color:var(--amber-light);}
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;}
+@media(max-width:600px){.sgrid{grid-template-columns:1fr 1fr;}}
+.sc{background:var(--oak-pale);border:1px solid var(--oak-border);border-radius:6px;padding:11px 13px;}
+.sc .sl{font-size:11px;font-family:monospace;color:var(--oak-light);margin-bottom:3px;}
+.sc .sv{font-size:18px;font-weight:bold;font-family:monospace;color:var(--oak);}
+.sc .ss{font-size:11px;color:var(--text-muted);margin-top:2px;}
+
+.notes{width:100%;min-height:75px;padding:10px 12px;border:1px solid var(--oak-border);border-radius:6px;font-family:monospace;font-size:13px;color:var(--text);background:var(--oak-pale);resize:vertical;}
+.notes:focus{outline:none;border-color:var(--amber);background:#fff;}
+.btn{padding:9px 18px;border-radius:5px;border:1px solid var(--oak);background:var(--oak);color:#F5EFE6;font-family:Georgia,serif;font-size:14px;cursor:pointer;}
+.btn:hover{opacity:.85;}
+.btn-o{background:transparent;color:var(--oak);}
+.btn-o:hover{background:var(--oak-pale);opacity:1;}
+.alert{padding:11px 15px;border-radius:6px;font-size:13px;margin-bottom:13px;font-family:monospace;background:var(--amber-pale);border:1px solid var(--amber-light);color:var(--oak);}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.r2{grid-template-columns:1fr;}}
+.fcbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:13px;}
+.fchip{padding:4px 12px;border:1px solid var(--oak-border);border-radius:20px;font-size:12px;font-family:monospace;cursor:pointer;background:var(--bg);color:var(--text-muted);}
+.fchip.on{background:var(--oak);color:#F5EFE6;border-color:var(--oak);}
+.tbar{background:var(--amber-pale);border:1px solid var(--amber);border-radius:8px;padding:13px 17px;display:flex;justify-content:space-between;align-items:center;margin-top:4px;}
+.tbar .tbl{font-size:14px;color:var(--oak);}
+.tbar .tbv{font-family:monospace;font-size:22px;font-weight:bold;color:var(--amber);}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-inner"><h1>&#x1FA9F; Planer Warsztatu Stolarskiego</h1></div>
+  <div class="bstrip"><div class="bstrip-inner">
+    <span>Bud&#x17C;et:</span>
+    <input type="number" id="budgetInput" value="40000" step="1000">
+    <span>PLN &nbsp;|&nbsp; Wydano: <span class="b-num" id="spentLbl">0 PLN</span></span>
+    <div class="b-track"><div class="b-fill" id="bFill" style="width:0%"></div></div>
+    <span>Zosta&#x142;o: <span class="b-num" id="remainLbl">40 000 PLN</span></span>
+  </div></div>
+</div>
+
+<nav class="nav"><div class="nav-inner">
+  <div class="tab active" data-tab="obiekt" onclick="showTab('obiekt')">&#x1F3E0; Obiekt</div>
+  <div class="tab" data-tab="adaptacja" onclick="showTab('adaptacja')">&#x1F527; Adaptacja</div>
+  <div class="tab" data-tab="wyposazenie" onclick="showTab('wyposazenie')">&#x1F5C4; Wyposa&#x17C;enie</div>
+  <div class="tab" data-tab="narzedzia" onclick="showTab('narzedzia')">&#x2699;&#xFE0F; Narz&#x119;dzia</div>
+  <div class="tab" data-tab="monitoring" onclick="showTab('monitoring')">&#x1F4F6; Monitoring HA</div>
+  <div class="tab" data-tab="odciag" onclick="showTab('odciag')">&#x1F32A; Odciąg pyłu</div>
+  <div class="tab" data-tab="raport" onclick="showTab('raport')">&#x1F4CA; Raport</div>
+</div></nav>
+
+<div class="main">
+
+<!-- TAB OBIEKT -->
+<div id="tab-obiekt" class="section active">
+<div class="stitle">Poszukiwanie obiektu</div>
+<div class="sdesc">Zaznacz spe&#x142;nione kryteria. Gwiazdki = waga kryterium.</div>
+<div class="alert">&#x1F4A1; Idea&#x142;: min. 40&#x2013;60 m&#xB2;, sufit &#x2265; 2,8 m, zasilanie tr&#xF3;jfazowe 400V, posadzka betonowa lub przemys&#x142;owa.</div>
+<div class="r2">
+<div>
+
+<div class="card" id="grp1-card">
+<div class="ctitle">&#x1F4D0; Powierzchnia i przestrze&#x144; <span class="badge" id="g1s">0/6</span></div>
+<div class="ci"><input type="checkbox" id="c1"><label for="c1"><span class="cb-box"></span><span class="clt"><strong>Powierzchnia &#x2265; 40 m&#xB2;</strong><small>Minimum dla komfortowej pracy + maszyny stacjonarne</small></span><span class="cstars"><span class="star f">&#x2605;</span><span class="star f">&#x2605;</span><span class="star f">&#x2605;</span></span></label></div>
+<div class="ci"><input type="checkbox" id="c2"><label for="c2"><span class="cb-box"></span><span class="clt"><strong>Wysoko&#x15B;&#x107; sufitu &#x2265; 2,8 m</strong><small>Niezb&#x119;dna przy d&#x142;ugich elementach i pile formatowej</small></span><span class="cstars"><span class="star f">&#x2605;</span><span class="star f">&#x2605;</span><span class="star f">&#x2605;</span></span></label></div>
+<div class="ci"><input type="checkbox" id="c3"><label for="c3"><span class="cb-box"></span><span class="clt"><strong>Szeroko&#x15B;&#x107; drzwi/bramy &#x2265; 2 m</strong><small>Wprowadzanie d&#x142;ugich desek, tarcicy, maszyn</small></span><span class="cstars"><span class="star f">&#x2605;</span><span class="star f">&#x2605;</span><span class="star">&#x2605;</span></span></label></div>
+<div class="ci"><input type="checkbox" id="c4"><label for="c4"><span class="cb-box"></span><span class="clt"><strong>Oddzielna strefa sk&#x142;adowania</strong><small>Osobne pomieszczenie lub wiata na tarcic&#x119; i p&#x142;yty</small></span><span class="cstars"><span class="star f">&#x2605;</span><span class="star">&#x2605;</span><span class="star">&#x2605;</span></span></label></div>
+<div class="ci"><input type="checkbox" id="c5"><label for="c5"><span class="cb-box"></span><span class="clt"><strong>Mo&#x17C;liwo&#x15B;&#x107; rozbudowy / aneks</strong><small>Opcja powi&#x119;kszenia lub dobudowania wiaty</small></span><span class="cstars"><span class="star f">&#x2605;</span><span class="star">&#x2605;</span><span class="star">&#x2605;</span></span></label></div>
+<div class="ci"><input type="checkbox" id="c6"><label for="c6"><span class="cb-box"></span><span class="clt"><strong>Posadzka betonowa / przemys&#x142;owa</strong><small>Wyr&#xF3;wnana, bez dylatacji utrudniaj&#x105;cych ruch maszyn</small></span><span class="cstars"><span class="star f">&#x2605;</span><span class="star f">&#x2605;</span><span class="star">&#x2605;</span></span></label></div>
+<div class="cprog" id="g1p">Sprawdzone: 0 z 6</div><div class="pbar"><div class="pfill" id="g1b" style="width:0%"></div></div>
+</div>
+
+<div class="card">
+<div class="ctitle">&#x26A1; Instalacje techniczne <span class="badge" id="g2s">0/5</span></div>
+<div class="ci"><input type="checkbox" id="c7"><label for="c7"><span class="cb-box"></span><span class="clt"><strong>Tr&#xF3;jfazowe zasilanie 400V (lub mo&#x17C;liwo&#x15B;&#x107;)</strong><small>Niezb&#x119;dne dla wi&#x119;kszo&#x15B;ci maszyn stacjonarnych</small></span><span class="cstars"><span class="star f">&#x2605;</span><span class="star f">&#x2605;</span><span class="star f">&#x2605;</span></span></label></div>
+<div class="ci"><input type="checkbox" id="c8"><label for="c8"><span class="cb-box"></span><span class="clt"><strong>Licznik &#x2265; 25A lub mo&#x17C;liwo&#x15B;&#x107; zwi&#x119;kszenia mocy</strong><small>Maszyny stolarskie mog&#x105; ci&#x105;gn&#x105;&#x107; 10&#x2013;20A ka&#x17C;da</small></span><span class="cstars"><span class="star f">&#x2605;</span><span class="star f">&#x2605;</span><span class="star f">&#x2605;</span></span></label></div>
+<div class="ci"><input type="checkbox" id="c9"><label for="c9"><span class="cb-box"></span><span class="clt"><strong>Woda i odp&#x142;yw</strong><small>Kran roboczy, umywalnia dla wyko&#x144;cze&#x144; i sprz&#x105;tania</small></span><span class="cstars"><span class="star f">&#x2605;</span><span class="star">&#x2605;</span><span class="star">&#x2605;</span></span></label></div>
+<div class="ci"><input type="checkbox" id="c10"><label for="c10"><span class="cb-box"></span><span class="clt"><strong>Kanalizacja lub szambo / oczyszczalnia</strong><small>Wymagane dla lakierni i strefy mycia</small></span><span class="cstars"><span class="star f">&#x2605;</span><span class="star">&#x2605;</span><span class="star">&#x2605;</span></span></label></div>
+<div class="ci"><input type="checkbox" id="c11"><label for="c11"><span class="cb-box"></span><span class="clt"><strong>Ogrzewanie lub mo&#x17C;liwo&#x15B;&#x107; monta&#x17C;u</strong><small>Kleje i lakiery wymagaj&#x105; min. +15&#xB0;C, praca ca&#x142;oroczna</small></span><span class="cstars"><span class="star f">&#x2605;</span><span class="star f">&#x2605;</span><span class="star">&#x2605;</span></span></label></div>
+<div class="cprog" id="g2p">Sprawdzone: 0 z 5</div><div class="pbar"><div class="pfill" id="g2b" style="width:0%"></div></div>
+</div>
+
+</div><div>
+
+<div class="card">
+<div class="ctitle">&#x1F4CD; Lokalizacja i dost&#x119;p <span class="badge" id="g3s">0/5</span></div>
+<div class="ci"><input type="checkbox" id="c12"><label for="c12"><span class="cb-box"></span><span class="clt"><strong>Dojazd ci&#x119;&#x17C;ar&#xF3;wk&#x105; / busem dostawczym</strong><small>Dostawy tarcicy, p&#x142;yt MDF/sklejki mog&#x105; by&#x107; paletowe</small></span><span class="cstars"><span class="star f">&#x2605;</span><span class="star f">&#x2605;</span><span class="star f">&#x2605;</span></span></label></div>
+<div class="ci"><input type="checkbox" id="c13"><label for="c13"><span class="cb-box"></span><span class="clt"><strong>Miejsce do roz&#x142;adunku materia&#x142;&#xF3;w</strong><small>Plac manewrowy lub podjazd z miejscem od&#x142;adczym</small></span><span class="cstars"><span class="star f">&#x2605;</span><span class="star f">&#x2605;</span><span class="star">&#x2605;</span></span></label></div>
+<div class="ci"><input type="checkbox" id="c14"><label for="c14"><span class="cb-box"></span><span class="clt"><strong>Odleg&#x142;o&#x15B;&#x107; od domu &#x2264; 20 min</strong><small>Codzienny dojazd &#x2014; kluczowy dla motywacji</small></span><span class="cstars"><span class="star f">&#x2605;</span><span class="star f">&#x2605;</span><span class="star">&#x2605;</span></span></label></div>
+<div class="ci"><input type="checkbox" id="c15"><label for="c15"><span class="cb-box"></span><span class="clt"><strong>S&#x105;siedztwo toleruj&#x105;ce ha&#x142;as</strong><small>Pilarka i wyr&#xF3;wniarka &#x2014; 90&#x2013;100 dB; unikaj zabudowy mieszkalnej</small></span><span class="cstars"><span class="star f">&#x2605;</span><span class="star f">&#x2605;</span><span class="star f">&#x2605;</span></span></label></div>
+<div class="ci"><input type="checkbox" id="c16"><label for="c16"><span class="cb-box"></span><span class="clt"><strong>MPZP / WZ bez kolizji z dzia&#x142;alno&#x15B;ci&#x105;</strong><small>Sprawd&#x17A; plan miejscowy pod k&#x105;tem dzia&#x142;alno&#x15B;ci wytw&#xF3;rczej</small></span><span class="cstars"><span class="star f">&#x2605;</span><span class="star f">&#x2605;</span><span class="star">&#x2605;</span></span></label></div>
+<div class="cprog" id="g3p">Sprawdzone: 0 z 5</div><div class="pbar"><div class="pfill" id="g3b" style="width:0%"></div></div>
+</div>
+
+<div class="card">
+<div class="ctitle">&#x1F512; BHP i bezpiecze&#x144;stwo <span class="badge" id="g4s">0/4</span></div>
+<div class="ci"><input type="checkbox" id="c17"><label for="c17"><span class="cb-box"></span><span class="clt"><strong>Wentylacja naturalna lub mo&#x17C;liwo&#x15B;&#x107; mechanicznej</strong><small>Py&#x142; drzewny &#x2014; zagro&#x17C;enie po&#x17C;arowe i zdrowotne</small></span><span class="cstars"><span class="star f">&#x2605;</span><span class="star f">&#x2605;</span><span class="star f">&#x2605;</span></span></label></div>
+<div class="ci"><input type="checkbox" id="c18"><label for="c18"><span class="cb-box"></span><span class="clt"><strong>Okna lub &#x15B;wietliki (&#x15B;wiat&#x142;o dzienne)</strong><small>Praca precyzyjna wymaga dobrego o&#x15B;wietlenia naturalnego</small></span><span class="cstars"><span class="star f">&#x2605;</span><span class="star f">&#x2605;</span><span class="star">&#x2605;</span></span></label></div>
+<div class="ci"><input type="checkbox" id="c19"><label for="c19"><span class="cb-box"></span><span class="clt"><strong>Mo&#x17C;liwo&#x15B;&#x107; monta&#x17C;u alarmu / monitoring</strong><small>Narz&#x119;dzia Festool to &#x142;akomy k&#x105;sek dla z&#x142;odziei</small></span><span class="cstars"><span class="star f">&#x2605;</span><span class="star">&#x2605;</span><span class="star">&#x2605;</span></span></label></div>
+<div class="ci"><input type="checkbox" id="c20"><label for="c20"><span class="cb-box"></span><span class="clt"><strong>Solidne zamkni&#x119;cia, kraty lub rolety</strong><small>Wzmocniona brama / drzwi wej&#x15B;ciowe</small></span><span class="cstars"><span class="star f">&#x2605;</span><span class="star">&#x2605;</span><span class="star">&#x2605;</span></span></label></div>
+<div class="cprog" id="g4p">Sprawdzone: 0 z 4</div><div class="pbar"><div class="pfill" id="g4b" style="width:0%"></div></div>
+</div>
+
+<div class="card">
+<div class="ctitle">&#x1F4B0; Aspekty formalne i finansowe <span class="badge" id="g5s">0/4</span></div>
+<div class="ci"><input type="checkbox" id="c21"><label for="c21"><span class="cb-box"></span><span class="clt"><strong>Czytelny stan prawny (brak obci&#x105;&#x17C;e&#x144;)</strong><small>Sprawd&#x17A; KW, hipoteki, s&#x142;u&#x17C;ebno&#x15B;ci</small></span><span class="cstars"><span class="star f">&#x2605;</span><span class="star f">&#x2605;</span><span class="star f">&#x2605;</span></span></label></div>
+<div class="ci"><input type="checkbox" id="c22"><label for="c22"><span class="cb-box"></span><span class="clt"><strong>Koszt najmu uwzgl&#x119;dniony w bud&#x17C;ecie</strong><small>Orientacyjnie 1 000&#x2013;3 000 PLN/mies. za gara&#x17C; lub hal&#x119;</small></span><span class="cstars"><span class="star f">&#x2605;</span><span class="star f">&#x2605;</span><span class="star f">&#x2605;</span></span></label></div>
+<div class="ci"><input type="checkbox" id="c23"><label for="c23"><span class="cb-box"></span><span class="clt"><strong>Umowa najmu min. 3 lata (je&#x15B;li najem)</strong><small>Inwestycja w adaptacj&#x119; wymaga amortyzacji w czasie</small></span><span class="cstars"><span class="star f">&#x2605;</span><span class="star f">&#x2605;</span><span class="star">&#x2605;</span></span></label></div>
+<div class="ci"><input type="checkbox" id="c24"><label for="c24"><span class="cb-box"></span><span class="clt"><strong>Zgoda w&#x142;a&#x15B;ciciela na prace adaptacyjne</strong><small>Wiercenie, instalacje, malowanie, rega&#x142;y &#x15B;cienne</small></span><span class="cstars"><span class="star f">&#x2605;</span><span class="star">&#x2605;</span><span class="star">&#x2605;</span></span></label></div>
+<div class="cprog" id="g5p">Sprawdzone: 0 z 4</div><div class="pbar"><div class="pfill" id="g5b" style="width:0%"></div></div>
+</div>
+
+</div></div>
+<div class="card" style="background:var(--oak-pale);">
+<div class="ctitle">&#x1F4DD; Notatki o obiekcie</div>
+<textarea class="notes" id="notes-obiekt" placeholder="Adres, kontakt do w&#x142;a&#x15B;ciciela, data ogl&#x119;dzin, og&#xF3;lne wra&#x17C;enia..."></textarea>
+<div id="check-summary" style="display:none;margin-top:11px;padding:10px 14px;background:var(--oak);color:#F5EFE6;border-radius:6px;font-family:monospace;font-size:13px;">Wynik obiektu: <span id="check-total"></span></div>
+</div>
+</div>
+
+<!-- TAB ADAPTACJA -->
+<div id="tab-adaptacja" class="section">
+<div class="stitle">Adaptacja i przystosowanie</div>
+<div class="sdesc">Wpisz szacowane koszty prac. Kwoty sumuj&#x105; si&#x119; automatycznie.</div>
+<div class="alert">&#x1F4A1; Pierwsze&#x144;stwo: instalacja elektryczna, wentylacja, posadzka. Bez nich nie ma bezpiecznej pracy.</div>
+<div class="r2">
+<div>
+<div class="card"><div class="ctitle">&#x26A1; Instalacja elektryczna</div>
+<div class="cr"><div class="crn">Projekt instalacji<small>Projekt elektryczny z atestami</small></div><input class="ci-num" type="number" value="800" data-cat="adaptacja"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Rozdzielnica + zabezpieczenia<small>Skrzynka RCD, MCB, ochrona przeciwprzepig&#x119;ciowa</small></div><input class="ci-num" type="number" value="1500" data-cat="adaptacja"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Okablowanie i gniazda<small>Tr&#xF3;jfazowe 400V + jednofazowe 230V</small></div><input class="ci-num" type="number" value="2000" data-cat="adaptacja"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Monta&#x17C; i odbiory<small>Elektryk, protok&#xF3;&#x142; UDT je&#x15B;li wymagany</small></div><input class="ci-num" type="number" value="1200" data-cat="adaptacja"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+<div class="card"><div class="ctitle">&#x1F4A8; Wentylacja</div>
+<div class="cr"><div class="crn">Otwory wentylacyjne / klapa<small>Naturalna wentylacja grawitacyjna</small></div><input class="ci-num" type="number" value="600" data-cat="adaptacja"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Wentylator osiowy z kratk&#x105;<small>Min. 1000 m&#xB3;/h dla 40 m&#xB2;</small></div><input class="ci-num" type="number" value="500" data-cat="adaptacja"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Kana&#x142;y wentylacyjne<small>Rury spiro, mocowania, przej&#x15B;cie przez &#x15B;cian&#x119;</small></div><input class="ci-num" type="number" value="800" data-cat="adaptacja"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+<div class="card"><div class="ctitle">&#x1F321; Ogrzewanie</div>
+<div class="cr"><div class="crn">Nagrzewnica elektryczna / gazowa<small>Ogrzewanie warsztatowe 5&#x2013;10 kW</small></div><input class="ci-num" type="number" value="1500" data-cat="adaptacja"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Monta&#x17C; i pod&#x142;&#x105;czenie<small>Instalacja, uchwyt, zabezpieczenie termiczne</small></div><input class="ci-num" type="number" value="400" data-cat="adaptacja"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+</div>
+<div>
+<div class="card"><div class="ctitle">&#x1F3D7; Posadzka i &#x15B;ciany</div>
+<div class="cr"><div class="crn">Wyr&#xF3;wnanie posadzki<small>Samopoziomuj&#x105;ca na powierzchni 40 m&#xB2;</small></div><input class="ci-num" type="number" value="800" data-cat="adaptacja"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Farba podk&#x142;adowa / epoksydowa<small>Uszczelnienie, &#x142;atwo&#x15B;&#x107; sprz&#x105;tania trocin</small></div><input class="ci-num" type="number" value="600" data-cat="adaptacja"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Malowanie &#x15B;cian<small>Jasna farba lateksowa, lepsza widzialno&#x15B;&#x107;</small></div><input class="ci-num" type="number" value="500" data-cat="adaptacja"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+<div class="card"><div class="ctitle">&#x1F4A1; O&#x15B;wietlenie</div>
+<div class="cr"><div class="crn">Oprawy LED warsztatowe (4&#x2013;6 szt.)<small>Min. 500 lux, 5000K, CRI &gt; 80</small></div><input class="ci-num" type="number" value="1200" data-cat="adaptacja"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">O&#x15B;wietlenie miejscowe nad starem<small>Lampy na ramieniu nad sto&#x142;em i maszynami</small></div><input class="ci-num" type="number" value="400" data-cat="adaptacja"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Instalacja o&#x15B;wietlenia<small>Kable, puszki, monta&#x17C;</small></div><input class="ci-num" type="number" value="500" data-cat="adaptacja"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+<div class="card"><div class="ctitle">&#x1F512; Zabezpieczenia i BHP</div>
+<div class="cr"><div class="crn">Alarm + czujka ruchu GSM</div><input class="ci-num" type="number" value="800" data-cat="adaptacja"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Wzmocnione zamki / k&#x142;&#xF3;dki</div><input class="ci-num" type="number" value="400" data-cat="adaptacja"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Ga&#x15B;nica 6 kg + 2 kg CO&#x2082;<small>Obowi&#x105;zkowe w warsztacie z drewnem</small></div><input class="ci-num" type="number" value="200" data-cat="adaptacja"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Rezerwa / nieprzewidziane prace</div><input class="ci-num" type="number" value="1500" data-cat="adaptacja"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Inne koszty adaptacji</div><input class="ci-num" type="number" value="0" data-cat="adaptacja"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+</div></div>
+<div class="tbar"><span class="tbl">Szacowany koszt adaptacji</span><span class="tbv" id="adapt-total">&#x2014;</span></div>
+</div>
+
+<!-- TAB WYPOSAZENIE -->
+<div id="tab-wyposazenie" class="section">
+<div class="stitle">Meble i wyposa&#x17C;enie warsztatu</div>
+<div class="sdesc">Sto&#x142;y robocze, systemy przechowywania, infrastruktura.</div>
+<div class="r2">
+<div>
+<div class="card"><div class="ctitle">&#x1FA91; Sto&#x142;y robocze</div>
+<div class="cr"><div class="crn">St&#xF3;&#x142; warsztatowy (blat 40 mm)<small>np. Gedore, Sch&#xE4;fer lub w&#x142;asnej roboty</small></div><input class="ci-num" type="number" value="1200" data-cat="wyposazenie"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">&#x141;awica stolarska z imad&#x142;em<small>Imad&#x142;o r&#xF3;wnoleg&#x142;e min. 120 mm szcz&#x119;ki</small></div><input class="ci-num" type="number" value="800" data-cat="wyposazenie"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">St&#xF3;&#x142; monta&#x17C;owy / od&#x142;adczy</div><input class="ci-num" type="number" value="500" data-cat="wyposazenie"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Sto&#x142;ki warsztatowe (2&#x2013;3 szt.)</div><input class="ci-num" type="number" value="300" data-cat="wyposazenie"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+<div class="card"><div class="ctitle">&#x1F5C4; Przechowywanie narz&#x119;dzi</div>
+<div class="cr"><div class="crn">Szafa metalowa na narz&#x119;dzia<small>Zamykana 180&#xD7;90, ochrona przed kurzem</small></div><input class="ci-num" type="number" value="600" data-cat="wyposazenie"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">W&#xF3;zek narz&#x119;dziowy 5-szufladowy</div><input class="ci-num" type="number" value="700" data-cat="wyposazenie"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Tablica perforowana (pegboard) 120&#xD7;80</div><input class="ci-num" type="number" value="200" data-cat="wyposazenie"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Haki i organizery do tablicy (komplet)</div><input class="ci-num" type="number" value="150" data-cat="wyposazenie"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+</div>
+<div>
+<div class="card"><div class="ctitle">&#x1F4E6; Rega&#x142;y na materia&#x142;y</div>
+<div class="cr"><div class="crn">Rega&#x142; metalowy na deski i p&#x142;yty<small>4&#x2013;5 p&#xF3;&#x142;ek, no&#x15B;no&#x15B;&#x107; 200 kg/p&#xF3;&#x142;k&#x119;</small></div><input class="ci-num" type="number" value="500" data-cat="wyposazenie"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Stojak pionowy na p&#x142;yty (pochylony)</div><input class="ci-num" type="number" value="300" data-cat="wyposazenie"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Rega&#x142; na akcesoria<small>Papier &#x15B;cierny, ta&#x15B;my, kleje, &#x15B;ruby</small></div><input class="ci-num" type="number" value="250" data-cat="wyposazenie"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+<div class="card"><div class="ctitle">&#x1F9F9; BHP i utrzymanie</div>
+<div class="cr"><div class="crn">Odkurzacz przemys&#x142;owy do trocin<small>Do sprz&#x105;tania &#x2014; osobny od odsysacza maszyn</small></div><input class="ci-num" type="number" value="600" data-cat="wyposazenie"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Zlewozmywak + kran<small>Mycie r&#x105;k, narz&#x119;dzi, p&#x119;dzli</small></div><input class="ci-num" type="number" value="400" data-cat="wyposazenie"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Apteczka pierwszej pomocy</div><input class="ci-num" type="number" value="120" data-cat="wyposazenie"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+<div class="card"><div class="ctitle">&#x1F50C; Infrastruktura zasilania</div>
+<div class="cr"><div class="crn">Przed&#x142;u&#x17C;acz warsztatowy 25 m / 16A</div><input class="ci-num" type="number" value="180" data-cat="wyposazenie"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Listwa zasilaj&#x105;ca 8-gniazd z filtrem</div><input class="ci-num" type="number" value="80" data-cat="wyposazenie"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Inne wyposa&#x17C;enie</div><input class="ci-num" type="number" value="0" data-cat="wyposazenie"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+</div></div>
+<div class="tbar"><span class="tbl">Szacowany koszt wyposa&#x17C;enia</span><span class="tbv" id="equip-total">&#x2014;</span></div>
+</div>
+
+<!-- TAB NARZEDZIA -->
+<div id="tab-narzedzia" class="section">
+<div class="stitle">Narz&#x119;dzia i elektronarz&#x119;dzia</div>
+<div class="sdesc">Zaznacz co posiadasz. Wybierz poziom cenowy dla ka&#x17C;dego narz&#x119;dzia. Ceny orientacyjne 2025.</div>
+<div class="fcbar">
+  <span class="fchip on" id="f-all" onclick="filterTools('all')">Wszystkie</span>
+  <span class="fchip" id="f-missing" onclick="filterTools('missing')">Do kupienia</span>
+  <span class="fchip" id="f-owned" onclick="filterTools('owned')">Ju&#x17C; posiadam</span>
+</div>
+<div class="alert">&#x1F4DD; Kliknij w cenę i wpisz aktualną wartość — zmiana zapisuje się automatycznie. &nbsp;&#x1F3F7; <strong>Festool</strong> &#x2014; jako&#x15B;&#x107; premium, system Systainer, gwarancja 3 lata, serwis door-to-door. &nbsp; <strong>DeWalt / Bosch Pro / Makita / Metabo</strong> &#x2014; bardzo dobra jako&#x15B;&#x107; profesjonalna, ni&#x17C;sze ceny, szeroka dost&#x119;pno&#x15B;&#x107; serwisu.</div>
+<div id="tools-container" class="tgrid"></div>
+<div class="tbar" style="margin-top:13px;"><div><span class="tbl">Koszt zakupu narz&#x119;dzi</span><div style="font-size:11px;color:var(--oak-light);font-family:monospace;margin-top:3px;">Tylko narz&#x119;dzia do kupienia z wybranym poziomem</div></div><span class="tbv" id="tools-total">&#x2014;</span></div>
+</div>
+
+<!-- TAB MONITORING HA -->
+<div id="tab-monitoring" class="section">
+<div class="stitle">Monitoring warsztatu &mdash; Home Assistant</div>
+<div class="sdesc">Serwer HA, sie&#x107; i czujniki Zigbee. Koszty jednorazowe, bez abonamentu.</div>
+<div class="alert">&#x1F4A1; Osobny budynek wymaga po&#x142;&#x105;czenia sieciowego (kabel LAN lub mesh Wi-Fi). Zigbee nie przebije mur&#xF3;w mi&#x119;dzy budynkami.</div>
+<div class="r2">
+<div>
+
+<div class="card"><div class="ctitle">&#x1F4BB; Serwer Home Assistant (Raspberry Pi)</div>
+<div class="cr"><div class="crn">Raspberry Pi 4 Model B &mdash; 4 GB RAM<small>Polecany: 4 GB dla p&#x142;ynnej pracy HA + add-ony</small></div><input class="ci-num" type="number" value="280" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Karta microSD 32 GB (boot)<small>Samsung Endurance Pro lub SanDisk Endurance</small></div><input class="ci-num" type="number" value="40" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Dysk SSD 120 GB USB 3.0 (dane HA)<small>Samsung T7 lub Kingston XS2000 &mdash; HA OS bootuje z SSD</small></div><input class="ci-num" type="number" value="120" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Obudowa aluminiowa z wentylatorem<small>Argon ONE M.2 lub Geekworm X735 &mdash; z miej. na SSD</small></div><input class="ci-num" type="number" value="130" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Zasilacz USB-C 5V/3A (oficjalny RPi)<small>Oryginalny Raspberry Pi PSU &mdash; nie oszcz&#x119;dzaj na zasilaczu</small></div><input class="ci-num" type="number" value="60" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+
+<div class="card"><div class="ctitle">&#x1F4E1; Koordynator Zigbee</div>
+<div class="cr"><div class="crn">Sonoff Zigbee 3.0 USB Dongle Plus-P<small>Najlepszy stosunek ceny do jako&#x15B;ci, chip TI CC2652P</small></div><input class="ci-num" type="number" value="80" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Przed&#x142;u&#x17C;acz USB 50 cm (do dongla)<small>Dongle blisko RPi generuje zak&#x142;&#xF3;cenia &mdash; przedl. eliminuje je</small></div><input class="ci-num" type="number" value="15" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+
+<div class="card"><div class="ctitle">&#x1F5C4; Szafka i infrastruktura</div>
+<div class="cr"><div class="crn">Szafka wisz&#x105;ca na spr. sieciowy (6U)<small>np. Linkbasic lub Toten 6U 450mm &mdash; zamykana, wentylowana</small></div><input class="ci-num" type="number" value="350" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Panel krosowniczy RJ45 (12 port&#xF3;w)<small>Opcjonalnie &mdash; porz&#x105;dkuje okablowanie LAN</small></div><input class="ci-num" type="number" value="80" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Przed&#x142;u&#x17C;acz / listwa rack 1,5 m (z bezp.)<small>Do szafki &mdash; min. 6 gniazd, filtr przeciwprzep.</small></div><input class="ci-num" type="number" value="120" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">UPS 600 VA (podtrzymanie pr&#x105;du)<small>APC Back-UPS 600 &mdash; chroni RPi i router przed spad. nap.</small></div><input class="ci-num" type="number" value="280" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+
+</div>
+<div>
+
+<div class="card"><div class="ctitle">&#x1F310; Sie&#x107; &mdash; po&#x142;&#x105;czenie dom&ndash;warsztat</div>
+<div class="cr"><div class="crn">Switch 8-portowy Gigabit (szafka dom)<small>TP-Link TL-SG108 lub Netgear GS308 &mdash; niemanagowany</small></div><input class="ci-num" type="number" value="100" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Switch 5-portowy Gigabit (warsztat)<small>TP-Link TL-SG105 &mdash; ma&#x142;y, do szafki w warsztacie</small></div><input class="ci-num" type="number" value="60" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Kabel LAN Cat6 w ziemi (20&ndash;30 m)<small>Z rur&#x105; HDPE &mdash; do&#x142;&#x105;cz 15% na z&#x142;&#x105;czki i muf&#x119;</small></div><input class="ci-num" type="number" value="150" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Rura ochronna HDPE 40 mm (25 m)<small>G&#x142;&#x119;b. uk&#x142;adania min. 60 cm, najlepiej 80 cm</small></div><input class="ci-num" type="number" value="80" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">AP Wi-Fi warsztat (mesh lub standalone)<small>TP-Link EAP225 lub Ubiquiti UniFi AP Lite</small></div><input class="ci-num" type="number" value="220" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+
+<div class="card"><div class="ctitle">&#x1F321; Czujniki Zigbee &mdash; warsztat</div>
+<div class="cr"><div class="crn">Aqara TH-S2 &mdash; temp. i wilgotno&#x15B;&#x107; (x2)<small>Strefa robocza + sk&#x142;ad drewna &mdash; Zigbee 3.0</small></div><input class="ci-num" type="number" value="160" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">IKEA VINDRIKTNING + modu&#x142; ESP32 (py&#x142;)<small>PM2.5 / PM10 &mdash; modu&#x142; Sinilink lub DIY ESPHome</small></div><input class="ci-num" type="number" value="110" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Heiman HS3SA &mdash; czujnik dymu + CO<small>Monta&#x17C; przy suficie, 30&ndash;50 cm od &#x15B;ciany</small></div><input class="ci-num" type="number" value="120" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Czujnik gazu LPG Zigbee<small>Monta&#x17C; przy pod&#x142;odze (propan ci&#x119;&#x17C;szy od powietrza)</small></div><input class="ci-num" type="number" value="80" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Shelly Pro EM &mdash; licznik energii (Wi-Fi)<small>Na szynie DIN w rozdzielnicy &mdash; 2 obwody</small></div><input class="ci-num" type="number" value="250" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Aqara Motion Sensor P1 &mdash; PIR (ruch)<small>Przy suficie &mdash; obejmuje ca&#x142;&#x105; stref&#x119; wej&#x15B;cia</small></div><input class="ci-num" type="number" value="80" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Aqara Door &amp; Window Sensor D1 (x2)<small>Drzwi wej&#x15B;ciowe + brama &mdash; alarm otwarcia</small></div><input class="ci-num" type="number" value="120" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+
+<div class="card"><div class="ctitle">&#x1F527; Okablowanie i monta&#x17C;</div>
+<div class="cr"><div class="crn">Kable LAN wewn&#x119;trzne warsztat (10 m)<small>Patch-cordy + okablowanie do AP i switch</small></div><input class="ci-num" type="number" value="40" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Inne materia&#x142;y i monta&#x17C;<small>Uchwyty, listwa, uszczelki, praca w&#x142;asna</small></div><input class="ci-num" type="number" value="100" data-cat="monitoring"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+
+</div>
+</div>
+<div class="tbar"><span class="tbl">Szacowany koszt monitoringu HA</span><span class="tbv" id="monitoring-total">&#x2014;</span></div>
+</div>
+
+
+<!-- TAB ODCIAG -->
+<div id="tab-odciag" class="section">
+<div class="stitle">Odciąg pyłu i trocin</div>
+<div class="sdesc">Warsztat 40 m², 2 punkty odciągu przy ścianie, filtracja i zawracanie powietrza. Ceny zweryfikowane czerwiec 2025.</div>
+<div class="alert">&#x26A0; Nie uruchamiaj obu odciągów jednocześnie — zasuwy blast gate regulują który punkt jest aktywny. Festool to osobny, niezależny system do narzędzi ręcznych.</div>
+<div class="r2">
+<div>
+
+<div class="card"><div class="ctitle">&#x1F300; Centralna jednostka filtrująca</div>
+<div class="cr"><div class="crn">Wariant ekonomiczny: Holzmann ABS 1080<small>1080 m³/h, 750 W, filtr workowy, Zeta 100 mm</small></div><input class="ci-num" type="number" value="1200" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Wariant optymalny: Cormak 2200 m³/h<small>2200 m³/h, 2,2 kW, 2 worki po 100 L, Zeta 100 mm</small></div><input class="ci-num" type="number" value="0" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Wariant premium: JET DC-1100A<small>1700 m³/h, filtr kasetowy 5 μm, cicha praca</small></div><input class="ci-num" type="number" value="0" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+
+<div class="card"><div class="ctitle">&#x1F300; Separator cyklonowy (opcja — zalecana)</div>
+<div class="cr"><div class="crn">Separator cyklonowy Zeta 100 mm<small>Zbiera 90% trocin przed filtrem — przedłuża żywotność worka</small></div><input class="ci-num" type="number" value="250" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Pojemnik na trociny do separatora (20 L)<small>Wiadro lub pojemnik metalowy z uszczelką</small></div><input class="ci-num" type="number" value="40" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+
+<div class="card"><div class="ctitle">&#x1F6E0; Rurociąg stały przy ścianie</div>
+<div class="cr"><div class="crn">Rura PVC Zeta 100 mm (odcinki 2 m × 4)<small>Trasa przy ścianie, ok. 6–8 m łącznie</small></div><input class="ci-num" type="number" value="100" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Kolano 90° Zeta 100 mm (×4 szt.)<small>Narożniki trasy przy ścianie</small></div><input class="ci-num" type="number" value="48" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Trójnik Zeta 100 mm (×1 szt.)<small>Rozdział na dwa punkty odciągu</small></div><input class="ci-num" type="number" value="25" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Zasuwa blast gate Zeta 100 mm metalowa (×2)<small>Regulacja który punkt odciągu jest aktywny</small></div><input class="ci-num" type="number" value="90" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Opaski zaciskowe i uchwyty ścienne<small>Montaż rury przy ścianie co 80 cm</small></div><input class="ci-num" type="number" value="40" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Taśma aluminiowa uszczelniająca<small>Szczelność połączeń — nie używaj taśmy duct tape</small></div><input class="ci-num" type="number" value="20" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+
+</div>
+<div>
+
+<div class="card"><div class="ctitle">&#x1F300; Wąże elastyczne do maszyn</div>
+<div class="cr"><div class="crn">Wąż elastyczny Zeta 100 mm / 3 m (×2)<small>Do każdego punktu odciągu osobny wąż</small></div><input class="ci-num" type="number" value="160" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Złączka redukcyjna Zeta 100→63 mm (×2)<small>Maszyny z wypadem Zeta 63 — pilarka, strugarka</small></div><input class="ci-num" type="number" value="30" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Opaska zaciskowa do wąża (komplet)<small>Pewne mocowanie — wibracje maszyny rozłączą wciskane wąże</small></div><input class="ci-num" type="number" value="20" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+
+<div class="card"><div class="ctitle">&#x1F9F9; Festool — narzędzia ręczne (osobny system)</div>
+<div class="cr"><div class="crn">Festool CTL SYS (zweryfikowana cena)<small>3700 l/min, 4,5 L, format Systainer — od 1 468 PLN</small></div><input class="ci-num" type="number" value="1890" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Alternatywa: Festool CT 15 Set<small>15 L, pełny zestaw z wążem i dyszami — 1 860 PLN</small></div><input class="ci-num" type="number" value="0" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Wąż antystatyczny Festool 3,5 m Zeta 27 mm<small>Do szlifierki / frezarki ręcznej</small></div><input class="ci-num" type="number" value="180" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Worki filtracyjne Festool FIS-CT SYS (5 szt.)<small>Wymiana co ok. 4–8 godzin intensywnej pracy</small></div><input class="ci-num" type="number" value="60" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+
+<div class="card"><div class="ctitle">&#x1F527; Montaż i materiały dodatkowe</div>
+<div class="cr"><div class="crn">Uchwyt ścienny na jednostkę / podstawa mobilna<small>Jednostka na kółkach lub przykręcona do ściany</small></div><input class="ci-num" type="number" value="80" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Worek zapasowy / filtr do jednostki centralnej<small>Pierwszy zapasowy — wymiana co 20–40 h pracy</small></div><input class="ci-num" type="number" value="60" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+<div class="cr"><div class="crn">Materiały montażowe i inne<small>Wiertla, kołki, uszczelki, praca własna</small></div><input class="ci-num" type="number" value="80" data-cat="odciag"> <span style="font-family:monospace;font-size:12px;color:var(--text-muted);">PLN</span></div>
+</div>
+
+</div>
+</div>
+<div class="tbar"><span class="tbl">Szacowany koszt systemu odciągu</span><span class="tbv" id="odciag-total">&#x2014;</span></div>
+</div>
+
+
+<!-- TAB RAPORT -->
+<div id="tab-raport" class="section">
+<div class="stitle">Raport finansowy</div>
+<div class="sdesc">Podsumowanie wszystkich zaplanowanych wydatk&#xF3;w.</div>
+<div class="sgrid">
+  <div class="sc"><div class="sl">BUD&#x17C;ET STARTOWY</div><div class="sv" id="r-budget">40 000</div><div class="ss">PLN &#x142;&#x105;cznie</div></div>
+  <div class="sc"><div class="sl">ZAPLANOWANE WYDATKI</div><div class="sv" id="r-total">0</div><div class="ss">PLN</div></div>
+  <div class="sc"><div class="sl">POZOSTA&#x141;Y BUFOR</div><div class="sv" id="r-remain">40 000</div><div class="ss">PLN rezerwa</div></div>
+</div>
+<div class="repsec"><div class="rephdr">Adaptacja i urz&#x105;dzenie obiektu</div>
+<div class="reprow"><span class="rlbl">Instalacja elektryczna</span><span class="rval" id="r-el">&#x2014;</span></div>
+<div class="reprow"><span class="rlbl">Wentylacja</span><span class="rval" id="r-vent">&#x2014;</span></div>
+<div class="reprow"><span class="rlbl">Ogrzewanie</span><span class="rval" id="r-heat">&#x2014;</span></div>
+<div class="reprow"><span class="rlbl">Posadzka i &#x15B;ciany</span><span class="rval" id="r-floor">&#x2014;</span></div>
+<div class="reprow"><span class="rlbl">O&#x15B;wietlenie</span><span class="rval" id="r-light">&#x2014;</span></div>
+<div class="reprow"><span class="rlbl">Zabezpieczenia i inne</span><span class="rval" id="r-sec">&#x2014;</span></div>
+<div class="reprow" style="border-top:1px solid var(--oak-border);padding-top:6px;font-weight:bold;"><span>Razem adaptacja</span><span class="rval" id="r-adapt-sum">&#x2014;</span></div>
+</div>
+<div class="repsec"><div class="rephdr">Meble i wyposa&#x17C;enie warsztatu</div>
+<div class="reprow"><span class="rlbl">Sto&#x142;y robocze</span><span class="rval" id="r-tables">&#x2014;</span></div>
+<div class="reprow"><span class="rlbl">Przechowywanie narz&#x119;dzi</span><span class="rval" id="r-storage">&#x2014;</span></div>
+<div class="reprow"><span class="rlbl">Rega&#x142;y na materia&#x142;y</span><span class="rval" id="r-racks">&#x2014;</span></div>
+<div class="reprow"><span class="rlbl">BHP, utrzymanie i infrastruktura</span><span class="rval" id="r-bhp">&#x2014;</span></div>
+<div class="reprow" style="border-top:1px solid var(--oak-border);padding-top:6px;font-weight:bold;"><span>Razem wyposa&#x17C;enie</span><span class="rval" id="r-equip-sum">&#x2014;</span></div>
+</div>
+<div class="repsec"><div class="rephdr">Narz&#x119;dzia i elektronarz&#x119;dzia (do zakupu)</div>
+<div class="reprow"><span class="rlbl">Elektronarz&#x119;dzia</span><span class="rval" id="r-power">&#x2014;</span></div>
+<div class="reprow"><span class="rlbl">Narz&#x119;dzia r&#x119;czne i mierz&#x105;ce</span><span class="rval" id="r-hand">&#x2014;</span></div>
+<div class="reprow" style="border-top:1px solid var(--oak-border);padding-top:6px;font-weight:bold;"><span>Razem narz&#x119;dzia</span><span class="rval" id="r-tools-sum">&#x2014;</span></div>
+</div>
+<div class="reptotal ok" id="rep-total-box">
+<div><div class="rl">&#x141;&#x104;CZNE PLANOWANE WYDATKI</div><div style="font-size:12px;color:var(--amber-light);margin-top:2px;" id="r-status">W ramach bud&#x17C;etu</div></div>
+<div class="rv" id="r-grand">0 PLN</div>
+</div>
+<div class="card" style="margin-top:13px;">
+<div class="ctitle">&#x1F4DD; Notatki i priorytety</div>
+<textarea class="notes" id="notes-raport" placeholder="Priorytety zakupowe, etapy wdro&#x17C;enia, planowane terminy..."></textarea>
+<div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
+<button class="btn" onclick="window.print()">&#x1F5A8; Drukuj raport</button>
+<button class="btn btn-o" onclick="exportData()">&#x1F4BE; Eksportuj do .txt</button>
+</div>
+</div>
+</div>
+
+</div>
+<script>
+const TOOLS=[
+{id:'t1',name:'Pilarka tar\u0107zowa r\u0119czna',cat:'power',desc:'Ci\u0119cia wzd\u0142u\u017cne i poprzeczne, p\u0142yty',festool:{price:2200,model:'Festool TS 55 REBQ'},pro:{price:800,model:'Makita HS7601 / DeWalt DWE560'}},
+{id:'t2',name:'Pilarka zanurzeniowa z prowadnic\u0105',cat:'power',desc:'Precyzyjne ci\u0119cia prowadnicz\u0105 szyn\u0105',festool:{price:2400,model:'Festool HKC 55 EB (aku)'},pro:{price:950,model:'Makita SP6000J / Bosch GKT 55 GCE'}},
+{id:'t3',name:'Wyrzyn\u0105rka',cat:'power',desc:'Ci\u0119cia krzywoliniowe, otwory',festool:{price:1200,model:'Festool PS 420 EBQ'},pro:{price:450,model:'Bosch GST 160 BCE / DeWalt DW333K'}},
+{id:'t4',name:'Szlifierka oscylacyjna (delta)',cat:'power',desc:'Szlifowanie kraw\u0119dzi i naro\u017cy',festool:{price:900,model:'Festool DTS 400 REQ'},pro:{price:280,model:'Bosch GDA 280 E / Makita BO3710'}},
+{id:'t5',name:'Szlifierka mimos\u0105rodowa (ETS/ROS)',cat:'power',desc:'Szlifowanie powierzchni \u2014 najwa\u017cniejsza szlifierka',festool:{price:1400,model:'Festool ETS EC 150/5'},pro:{price:500,model:'Makita BO6040 / Metabo SXE450'}},
+{id:'t6',name:'Frezarka g\u00F3rnowrzecionowa',cat:'power',desc:'Frezowanie profili, rowk\u00F3w, czop\u00F3w',festool:{price:2400,model:'Festool OF 1400 EBQ'},pro:{price:900,model:'Bosch GOF 1250 CE / DeWalt DW626'}},
+{id:'t7',name:'System \u0142\u0105cz\u0105cy (Domino / biscuit)',cat:'power',desc:'\u0141\u0105czenia drewna na pi\u00F3ro/wpust',festool:{price:2800,model:'Festool DF 500 Q Domino'},pro:{price:700,model:'DeWalt DW682K / Bosch GFF 22 A'}},
+{id:'t8',name:'Wiertarka udarowa / kombinator',cat:'power',desc:'Wiercenie, wkr\u0119canie, kucie',festool:{price:1100,model:'Festool BHC 18 (aku)'},pro:{price:400,model:'Bosch GSB 21-2 RCT / DeWalt DCD796'}},
+{id:'t9',name:'Wkr\u0119tarka akumulatorowa (zestaw 2 szt.)',cat:'power',desc:'Codzienne wkr\u0119canie \u2014 niezb\u0119dna para',festool:{price:1600,model:'Festool TDC 18/4 (2x5 Ah)'},pro:{price:600,model:'DeWalt DCK2064 / Makita DLX2127'}},
+{id:'t10',name:'Pistolet do gwo\u017adzi / zszywacz',cat:'power',desc:'Monta\u017c tylnych \u015bcianek, listew',festool:{price:1300,model:'Festool DAS 18 (aku)'},pro:{price:500,model:'DeWalt DCN692 / Metabo NR90AE'}},
+{id:'t11',name:'Odsysacz / odkurzacz warsztatowy',cat:'power',desc:'Odsysanie od narz\u0119dzi \u2014 kluczowe dla zdrowia',festool:{price:1800,model:'Festool CTL SYS 5 L'},pro:{price:700,model:'Bosch GAS 35 M AFC / DeWalt DWV012'}},
+{id:'t12',name:'Pilarka sto\u0142owa formatowa',cat:'power',desc:'Ci\u0119cia formatowe \u2014 du\u017cy zakup',festool:{price:0,model:'(Festool nie produkuje)'},pro:{price:3500,model:'Bosch GTS 635-216 / DeWalt DWE7492'}},
+{id:'h1',name:'Zesp struga r\u0119cznych (zgrubny + g\u0142adzik)',cat:'hand',desc:'Heblowanie, dopasowywanie grubo\u015bci',festool:{price:0,model:'(Festool nie produkuje)'},pro:{price:600,model:'Lie-Nielsen / Veritas / Stanley Sweetheart'}},
+{id:'h2',name:'D\u0142uta stolarskie \u2014 komplet 6 szt.',cat:'hand',desc:'Ci\u0119cie i czyszczenie po\u0142\u0105cze\u0144',festool:{price:0,model:'(Festool nie produkuje)'},pro:{price:300,model:'Narex Premium / Ashley Iles / Two Cherries'}},
+{id:'h3',name:'Piły r\u0119czne (poprzeczna + wzd\u0142u\u017cna + japo\u0144ska)',cat:'hand',desc:'Ci\u0119cia precyzyjne bez elektronarz\u0119dzi',festool:{price:0,model:'(Festool nie produkuje)'},pro:{price:250,model:'Bahco / Gyokucho / Suizan'}},
+{id:'h4',name:'Miarka ta\u015bmowa 8 m',cat:'hand',desc:'Mierzenie \u2014 najwa\u017cniejszy nawyk',festool:{price:0,model:'(Festool nie produkuje)'},pro:{price:80,model:'Stabila / Stanley FatMax'}},
+{id:'h5',name:'K\u0105townik precyzyjny 90\u00B0 stalowy',cat:'hand',desc:'Sprawdzanie prostopado\u015bci \u2014 niezb\u0119dne',festool:{price:0,model:'(Festool nie produkuje)'},pro:{price:150,model:'Starrett / Kinex / Stabila'}},
+{id:'h6',name:'K\u0105tomierz nastawny (uk\u015bnik)',cat:'hand',desc:'Ci\u0119cia pod k\u0105tem, kopiowanie k\u0105ta',festool:{price:0,model:'(Festool nie produkuje)'},pro:{price:120,model:'Starrett / Veritas / Pinie'}},
+{id:'h7',name:'Poziomnica 60 cm + 120 cm',cat:'hand',desc:'Sprawdzanie poziom\u00F3w przy monta\u017cu',festool:{price:0,model:'(Festool nie produkuje)'},pro:{price:180,model:'Stabila / Milwaukee'}},
+{id:'h8',name:'\u015aci\u015bk mimos\u0105rodowy F (komplet 8\u201310 szt.)',cat:'hand',desc:'\u015aciskanie klejonych z\u0142\u0105czy \u2014 im wi\u0119cej, tym lepiej',festool:{price:0,model:'(Festool nie produkuje)'},pro:{price:400,model:'Bessey / Irwin / Record'}},
+{id:'h9',name:'\u015arubokr\u0119ty, klucze, narz\u0119dzia serwisowe',cat:'hand',desc:'Serwis, monta\u017c, regulacja maszyn',festool:{price:0,model:'(Festool nie produkuje)'},pro:{price:350,model:'Wera / Wiha / Knipex'}},
+];
+
+const state={owned:{},tier:{},prices:{}};
+let BUDGET=40000;
+
+// BUDGET
+document.getElementById('budgetInput').addEventListener('input',function(){
+  BUDGET=parseFloat(this.value)||40000;recalc();
+});
+
+// TABS
+function showTab(name){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.querySelector('.tab[data-tab="'+name+'"]').classList.add('active');
+  if(name==='raport')renderReport();
+  if(name==='monitoring'){recalc();}
+  saveState();
+}
+
+// CHECKS — wszystkie przez natywny <label for>, zero onclick na divach
+const GROUPS=[
+  {s:'g1s',p:'g1p',b:'g1b',ids:['c1','c2','c3','c4','c5','c6']},
+  {s:'g2s',p:'g2p',b:'g2b',ids:['c7','c8','c9','c10','c11']},
+  {s:'g3s',p:'g3p',b:'g3b',ids:['c12','c13','c14','c15','c16']},
+  {s:'g4s',p:'g4p',b:'g4b',ids:['c17','c18','c19','c20']},
+  {s:'g5s',p:'g5p',b:'g5b',ids:['c21','c22','c23','c24']},
+];
+function updateChecks(){
+  let td=0,ta=0;
+  GROUPS.forEach(g=>{
+    const done=g.ids.filter(id=>document.getElementById(id)?.checked).length;
+    const all=g.ids.length;
+    td+=done;ta+=all;
+    const pct=all?Math.round(done/all*100):0;
+    document.getElementById(g.s).textContent=done+'/'+all;
+    document.getElementById(g.p).textContent='Sprawdzone: '+done+' z '+all;
+    document.getElementById(g.b).style.width=pct+'%';
+  });
+  const box=document.getElementById('check-summary');
+  if(ta>0){box.style.display='block';document.getElementById('check-total').textContent=td+' / '+ta+' kryteri\u00F3w ('+Math.round(td/ta*100)+'%)';}
+}
+document.querySelectorAll('.ci input[type=checkbox]').forEach(cb=>{
+  cb.addEventListener('change',()=>{updateChecks();saveState();});
+});
+
+// COSTS
+function sumCat(cat){
+  return Array.from(document.querySelectorAll('input[data-cat="'+cat+'"]')).reduce((s,e)=>s+(parseFloat(e.value)||0),0);
+}
+function fmt(n){return Math.round(n).toLocaleString('pl-PL')+' PLN';}
+function getPrice(t,tier){
+  const k=t.id+'-'+tier;
+  return state.prices[k]!==undefined?state.prices[k]:(t[tier]?t[tier].price:0);
+}
+function calcTools(){
+  return TOOLS.reduce((s,t)=>{
+    if(state.owned[t.id])return s;
+    const tier=state.tier[t.id];if(!tier)return s;
+    const p=getPrice(t,tier);if(!p)return s;
+    return s+p;
+  },0);
+}
+function recalc(){
+  const ad=sumCat('adaptacja'),eq=sumCat('wyposazenie'),tl=calcTools(),mn=sumCat('monitoring'),od=sumCat('odciag'),tot=ad+eq+tl+mn+od;
+  const g=id=>document.getElementById(id);
+  if(g('adapt-total'))g('adapt-total').textContent=fmt(ad);
+  if(g('equip-total'))g('equip-total').textContent=fmt(eq);
+  if(g('tools-total'))g('tools-total').textContent=fmt(tl);
+  if(g('monitoring-total'))g('monitoring-total').textContent=fmt(mn);
+  if(g('odciag-total'))g('odciag-total').textContent=fmt(od);
+  const pct=Math.min(100,Math.round(tot/BUDGET*100));
+  const fill=g('bFill');if(fill){fill.style.width=pct+'%';fill.classList.toggle('over',tot>BUDGET);}
+  if(g('spentLbl'))g('spentLbl').textContent=fmt(tot);
+  if(g('remainLbl'))g('remainLbl').textContent=fmt(BUDGET-tot);
+  saveState();
+}
+
+// TOOLS RENDER
+let curFilter='all';
+function filterTools(f){
+  curFilter=f;
+  document.querySelectorAll('.fchip').forEach(c=>c.classList.remove('on'));
+  document.getElementById('f-'+f).classList.add('on');
+  renderTools();
+}
+function renderTools(){
+  const cnt=document.getElementById('tools-container');
+  cnt.innerHTML='';
+  TOOLS.forEach(t=>{
+    const owned=!!state.owned[t.id];
+    if(curFilter==='owned'&&!owned)return;
+    if(curFilter==='missing'&&owned)return;
+    const tier=state.tier[t.id]||null;
+    const hasF=t.festool.price>0;
+    const div=document.createElement('div');
+    div.className='tcard'+(owned?' owned':'');
+    div.innerHTML=
+      '<div class="thead">'+
+      '<input type="checkbox" class="own-cb" id="own-'+t.id+'"'+(owned?' checked':'')+'>'+
+      '<label class="tname" for="own-'+t.id+'" style="cursor:pointer;">'+t.name+'</label>'+
+      '<span class="tstatus">'+(owned?'\u2713 posiadam':'do kupienia')+'</span>'+
+      '</div>'+
+      '<div style="font-size:12px;color:var(--text-muted);font-family:monospace;margin-bottom:5px;">'+t.desc+'</div>'+
+      (owned?'':
+        '<div class="tr"><span class="trlbl">Festool</span>'+(hasF?'<input type="number" class="tprice f" data-id="'+t.id+'" data-tier="festool" value="'+getPrice(t,"festool")+'">':'<span class="trval">&mdash;</span>')+'<span class="trmod">'+t.festool.model+'</span></div>'+
+        '<div class="tr"><span class="trlbl">Pro tier</span>'+(t.pro.price>0?'<input type="number" class="tprice p" data-id="'+t.id+'" data-tier="pro" value="'+getPrice(t,"pro")+'">':'<span class="trval">&mdash;</span>')+'<span class="trmod">'+t.pro.model+'</span></div>'+
+        '<div class="tsel">'+
+        (hasF?'<div class="tbtn'+(tier==='festool'?' sf':'')+'" data-id="'+t.id+'" data-tier="festool">\uD83C\uDFC6 Festool</div>':'')+
+        '<div class="tbtn'+(tier==='pro'?' sp':'')+'" data-id="'+t.id+'" data-tier="pro">\u2B50 Pro tier</div>'+
+        '<div class="tbtn'+(tier===null?' ss':'')+'" data-id="'+t.id+'" data-tier="skip">pomin\u0105</div>'+
+        '</div>'
+      );
+    const cb=div.querySelector('.own-cb');
+    if(cb)cb.addEventListener('change',()=>{state.owned[t.id]=cb.checked;if(cb.checked)delete state.tier[t.id];renderTools();recalc();});
+    div.querySelectorAll('.tbtn').forEach(b=>b.addEventListener('click',()=>{state.tier[t.id]=b.dataset.tier==='skip'?null:b.dataset.tier;renderTools();recalc();}));
+    div.querySelectorAll('.tprice').forEach(inp=>{
+      inp.addEventListener('input',()=>{state.prices[inp.dataset.id+'-'+inp.dataset.tier]=parseFloat(inp.value)||0;recalc();});
+      inp.addEventListener('change',()=>{saveState();});
+    });
+    cnt.appendChild(div);
+  });
+}
+
+// REPORT
+function cardSum(tabId,idx){
+  const cards=document.querySelectorAll('#'+tabId+' .card');
+  if(!cards[idx])return 0;
+  return Array.from(cards[idx].querySelectorAll('input[type=number]')).reduce((s,e)=>s+(parseFloat(e.value)||0),0);
+}
+function renderReport(){
+  const el=cardSum('tab-adaptacja',0),vn=cardSum('tab-adaptacja',1),ht=cardSum('tab-adaptacja',2),
+        fl=cardSum('tab-adaptacja',3),li=cardSum('tab-adaptacja',4),sc=cardSum('tab-adaptacja',5);
+  const adS=el+vn+ht+fl+li+sc;
+  const tb=cardSum('tab-wyposazenie',0),st=cardSum('tab-wyposazenie',1),
+        rk=cardSum('tab-wyposazenie',2),bh=cardSum('tab-wyposazenie',3)+cardSum('tab-wyposazenie',4);
+  const eqS=tb+st+rk+bh;
+  const pw=TOOLS.filter(t=>t.cat==='power'&&!state.owned[t.id]&&state.tier[t.id]&&getPrice(t,state.tier[t.id])>0).reduce((s,t)=>s+getPrice(t,state.tier[t.id]),0);
+  const hw=TOOLS.filter(t=>t.cat==='hand'&&!state.owned[t.id]&&state.tier[t.id]&&getPrice(t,state.tier[t.id])>0).reduce((s,t)=>s+getPrice(t,state.tier[t.id]),0);
+  const tlS=pw+hw,grand=adS+eqS+tlS;
+  const g=id=>document.getElementById(id);
+  g('r-budget').textContent=Math.round(BUDGET).toLocaleString('pl-PL');
+  g('r-el').textContent=fmt(el);g('r-vent').textContent=fmt(vn);g('r-heat').textContent=fmt(ht);
+  g('r-floor').textContent=fmt(fl);g('r-light').textContent=fmt(li);g('r-sec').textContent=fmt(sc);
+  g('r-adapt-sum').textContent=fmt(adS);
+  g('r-tables').textContent=fmt(tb);g('r-storage').textContent=fmt(st);g('r-racks').textContent=fmt(rk);g('r-bhp').textContent=fmt(bh);
+  g('r-equip-sum').textContent=fmt(eqS);
+  g('r-power').textContent=fmt(pw);g('r-hand').textContent=fmt(hw);g('r-tools-sum').textContent=fmt(tlS);
+  const mn=sumCat('monitoring');
+  const od=sumCat('odciag');
+  const odUnit=cardSum('tab-odciag',0)+cardSum('tab-odciag',1);
+  const odPipes=cardSum('tab-odciag',2)+cardSum('tab-odciag',3);
+  const odFestool=cardSum('tab-odciag',4);
+  const odInstall=cardSum('tab-odciag',5);
+  const rpi=cardSum('tab-monitoring',0)+cardSum('tab-monitoring',1);
+  const rack=cardSum('tab-monitoring',2);
+  const net=cardSum('tab-monitoring',3);
+  const sensors=cardSum('tab-monitoring',4)+cardSum('tab-monitoring',5)+cardSum('tab-monitoring',6);
+  const monSum=mn;
+  const grand2=adS+eqS+tlS+monSum+od;
+  g('r-rpi').textContent=fmt(rpi);
+  g('r-rack').textContent=fmt(rack);
+  g('r-net').textContent=fmt(net);
+  g('r-sensors').textContent=fmt(sensors);
+  g('r-mon-sum').textContent=fmt(monSum);
+  g('r-od-unit').textContent=fmt(odUnit);
+  g('r-od-pipes').textContent=fmt(odPipes);
+  g('r-od-festool').textContent=fmt(odFestool);
+  g('r-od-install').textContent=fmt(odInstall);
+  g('r-od-sum').textContent=fmt(od);
+  g('r-total').textContent=Math.round(grand2).toLocaleString('pl-PL');
+  g('r-remain').textContent=Math.round(BUDGET-grand2).toLocaleString('pl-PL');
+  g('r-grand').textContent=fmt(grand2);
+  const box=g('rep-total-box'),sts=g('r-status');
+  if(grand2>BUDGET){box.className='reptotal warn';sts.textContent='\u26A0 Przekroczono bud\u017Cet o '+fmt(grand2-BUDGET);}
+  else{box.className='reptotal ok';sts.textContent='\u2713 W ramach bud\u017Cetu \u2014 bufor '+Math.round((BUDGET-grand2)/BUDGET*100)+'%';}
+}
+
+// SAVE/LOAD
+function saveState(){
+  try{localStorage.setItem('warsztat-v6',JSON.stringify({
+    owned:state.owned,tier:state.tier,prices:state.prices,budget:BUDGET,
+    adaptacja:Array.from(document.querySelectorAll('input[data-cat="adaptacja"]')).map(e=>e.value),
+    monitoring:Array.from(document.querySelectorAll('input[data-cat="monitoring"]')).map(e=>e.value),
+    odciag:Array.from(document.querySelectorAll('input[data-cat="odciag"]')).map(e=>e.value),
+    wyposazenie:Array.from(document.querySelectorAll('input[data-cat="wyposazenie"]')).map(e=>e.value),
+    notesOb:document.getElementById('notes-obiekt')?.value,
+    notesRp:document.getElementById('notes-raport')?.value,
+    checks:Array.from(document.querySelectorAll('.ci input[type=checkbox]')).map(c=>c.checked)
+  }));}catch(e){}
+}
+function loadState(){
+  try{
+    const raw=localStorage.getItem('warsztat-v6');if(!raw)return;
+    const d=JSON.parse(raw);
+    Object.assign(state.owned,d.owned||{});Object.assign(state.tier,d.tier||{});Object.assign(state.prices,d.prices||{});
+    if(d.budget){BUDGET=d.budget;document.getElementById('budgetInput').value=d.budget;}
+    if(d.adaptacja){const els=document.querySelectorAll('input[data-cat="adaptacja"]');d.adaptacja.forEach((v,i)=>{if(els[i])els[i].value=v;});}
+    if(d.wyposazenie){const els=document.querySelectorAll('input[data-cat="wyposazenie"]');d.wyposazenie.forEach((v,i)=>{if(els[i])els[i].value=v;});}
+    if(d.monitoring){const els=document.querySelectorAll('input[data-cat="monitoring"]');d.monitoring.forEach((v,i)=>{if(els[i])els[i].value=v;});}
+    if(d.odciag){const els=document.querySelectorAll('input[data-cat="odciag"]');d.odciag.forEach((v,i)=>{if(els[i])els[i].value=v;});}
+    if(d.notesOb)document.getElementById('notes-obiekt').value=d.notesOb;
+    if(d.notesRp)document.getElementById('notes-raport').value=d.notesRp;
+    if(d.checks){const cbs=document.querySelectorAll('.ci input[type=checkbox]');d.checks.forEach((v,i)=>{if(cbs[i])cbs[i].checked=v;});}
+  }catch(e){}
+}
+
+// EXPORT
+function exportData(){
+  const lines=['=== PLANER WARSZTATU STOLARSKIEGO ===','Data: '+new Date().toLocaleDateString('pl-PL'),''];
+  lines.push('--- ADAPTACJA ---');
+  document.querySelectorAll('#tab-adaptacja .cr').forEach(r=>{const n=r.querySelector('.crn')?.firstChild?.textContent.trim(),v=r.querySelector('input')?.value;if(n&&v)lines.push(n+': '+Number(v).toLocaleString('pl-PL')+' PLN');});
+  lines.push('','--- WYPOSAZENIE ---');
+  document.querySelectorAll('#tab-wyposazenie .cr').forEach(r=>{const n=r.querySelector('.crn')?.firstChild?.textContent.trim(),v=r.querySelector('input')?.value;if(n&&v)lines.push(n+': '+Number(v).toLocaleString('pl-PL')+' PLN');});
+  lines.push('','--- NARZEDZIA ---');
+  TOOLS.forEach(t=>{const o=state.owned[t.id]?'POSIADAM':(state.tier[t.id]?state.tier[t.id].toUpperCase():'POMINI\u0118TY');const selP=!state.owned[t.id]&&state.tier[t.id]?getPrice(t,state.tier[t.id]):0;const p=selP?' \u2014 '+selP.toLocaleString('pl-PL')+' PLN':'';lines.push(t.name+': '+o+p);});
+  lines.push('','--- MONITORING HA ---');
+  document.querySelectorAll('#tab-odciag .cr').forEach(r=>{const n=r.querySelector('.crn')?.firstChild?.textContent.trim(),v=r.querySelector('input')?.value;if(n&&v&&Number(v)>0)lines.push(n+': '+Number(v).toLocaleString('pl-PL')+' PLN');});
+  lines.push('','--- ODCIĄG PYŁU ---');
+  document.querySelectorAll('#tab-monitoring .cr').forEach(r=>{const n=r.querySelector('.crn')?.firstChild?.textContent.trim(),v=r.querySelector('input')?.value;if(n&&v)lines.push(n+': '+Number(v).toLocaleString('pl-PL')+' PLN');});
+  lines.push('','--- NOTATKI ---',document.getElementById('notes-obiekt')?.value||'',document.getElementById('notes-raport')?.value||'');
+  const blob=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='planer-warsztatu.txt';a.click();
+}
+
+// INIT
+loadState();
+updateChecks();
+renderTools();
+recalc();
+document.querySelectorAll('input[data-cat]').forEach(e=>e.addEventListener('input',recalc));
+document.querySelectorAll('.notes').forEach(e=>e.addEventListener('input',saveState));
+</script>
+</body>
+</html>
